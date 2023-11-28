@@ -1,8 +1,12 @@
 const express = require("express");
+const cors = require("cors");
 const app = express();
 
 // This will store the location data
 let locationData = [];
+
+app.use(express.json());
+app.use(cors());
 
 // Endpoint to receive and save data
 app.post("/data", (req, res) => {
@@ -23,7 +27,7 @@ app.post("/data", (req, res) => {
 });
 
 // Endpoint to retrieve saved data
-app.get("/data", (req, res) => {
+app.get("/", (req, res) => {
   res.json(locationData);
 });
 
