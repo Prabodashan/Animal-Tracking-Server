@@ -23,7 +23,7 @@ app.post("/data", (req, res) => {
     dateTime,
   });
 
-  res.send("Data received and saved!");
+  res.send(deviceId);
 });
 
 // Endpoint to receive and save data
