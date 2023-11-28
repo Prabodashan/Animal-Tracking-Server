@@ -26,6 +26,24 @@ app.post("/data", (req, res) => {
   res.send("Data received and saved!");
 });
 
+// Endpoint to receive and save data
+app.get("/data", (req, res) => {
+  const { latitude, longitude, deviceId } = req.query; // Assuming data is sent via POST request
+
+  // Get the current date and time
+  const dateTime = new Date().toISOString();
+
+  // Store the data
+  locationData.push({
+    latitude,
+    longitude,
+    deviceId,
+    dateTime,
+  });
+
+  res.send("Data received and saved!");
+});
+
 // Endpoint to retrieve saved data
 app.get("/", (req, res) => {
   res.json(locationData);
