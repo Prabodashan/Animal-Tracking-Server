@@ -19,7 +19,7 @@ app.post("/data", (req, res) => {
   locationData.push({
     latitude,
     longitude,
-    deviceId,
+    deviceId, 
     dateTime,
   });
 
