@@ -6,8 +6,8 @@ const {
   GetOperatorById,
 } = require("./Operator");
 const {
-  CreateWeighingDevice,
-  GetAllDeviceDetails,
+  CreateDevice,
+  GetAllDeviceByUserId,
   GetAllWeighingDevicesDetails,
   GetWeighingDevicesDataById,
   UpdateWeighingDevice,
@@ -20,13 +20,7 @@ const {
   UpdateWeighingData,
   DeleteWeighingData,
 } = require("./WeighingData");
-const {
-  Createitem,
-  GetAllitems,
-  GetitemsByUserId,
-  Updateitem,
-  Deleteitem,
-} = require("./item");
+
 const {
   GenerateAccessToken,
   DeleteRefreshToken,
@@ -44,8 +38,8 @@ module.exports = {
   GenerateAccessToken,
   DeleteRefreshToken,
   GetUserInfoByToken,
-  CreateWeighingDevice,
-  GetAllDeviceDetails,
+  CreateDevice,
+  GetAllDeviceByUserId,
   GetAllWeighingDevicesDetails,
   GetWeighingDevicesDataById,
   GetWeighingDeviceDetailsById,
@@ -55,9 +49,4 @@ module.exports = {
   CreateWeighingData,
   UpdateWeighingData,
   DeleteWeighingData,
-  Createitem,
-  GetAllitems,
-  GetitemsByUserId,
-  Updateitem,
-  Deleteitem,
 };

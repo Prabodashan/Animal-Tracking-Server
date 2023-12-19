@@ -2,7 +2,7 @@
 const bcrypt = require("bcrypt");
 
 // ----------Custom libraries and modules----------
-const { CustomerModel, UserTokenModel } = require("../models");
+const { OperatorModel, UserTokenModel } = require("../models");
 const { GenerateTokens } = require("../helpers");
 
 // ----------Conroller function to register new user----------
@@ -12,7 +12,7 @@ const RegisterOperator = async (req, res) => {
 
   try {
     // Check if email or phone number already exist
-    const user = await CustomerModel.findOne({
+    const user = await OperatorModel.findOne({
       $or: [{ emailAddress }, { phoneNumber }],
     }).exec();
     if (user) {
@@ -28,7 +28,7 @@ const RegisterOperator = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 8);
 
     // New user
-    const newUser = new CustomerModel({
+    const newUser = new OperatorModel({
       fullName,
       emailAddress,
       password: hashedPassword,
@@ -64,7 +64,7 @@ const LoginOperator = async (req, res) => {
 
   try {
     // Check if email already exists
-    const user = await CustomerModel.findOne({ emailAddress }).exec();
+    const user = await OperatorModel.findOne({ emailAddress }).exec();
     if (!user) {
       return res.json({
         status: false,
@@ -127,7 +127,7 @@ const GetOperatorById = async (req, res) => {
   const { userId } = req.params;
 
   try {
-    const user = await CustomerModel.findOne({ _id: userId }).exec();
+    const user = await OperatorModel.findOne({ _id: userId }).exec();
     return res.status(200).json({
       status: true,
       user,

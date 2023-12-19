@@ -8,14 +8,6 @@ const WeighingDeviceSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    imageUrl: {
-      type: String,
-    },
-    assignedItem: {
-      type: mongoose.Schema.Types.ObjectId,
-      required: true,
-      default: 0,
-    },
     userId: {
       type: String,
       required: true,
@@ -33,6 +25,10 @@ const WeighingDeviceSchema = new mongoose.Schema(
       required: true,
     },
     timeUpdated: {
+      type: String,
+      required: true,
+    },
+    createdBy: {
       type: String,
       required: true,
     },

@@ -8,6 +8,7 @@ const Configs = require("./configs");
 const { ConnectDatabase } = require("./api/v1/helpers");
 const {
   CustomerRoutes,
+  OperatorRoutes,
   DeviceRoutes,
   WeighingDataRoutes,
   UserTokenRoutes,
@@ -35,7 +36,7 @@ app.get("/", (req, res) => {
 
 // User route
 app.use("/api/customers", CustomerRoutes);
-// app.use("/api/users", UserRoutes);
+app.use("/api/operator", OperatorRoutes);
 
 // Device data route
 app.use("/api/weighingdata", WeighingDataRoutes);
@@ -43,11 +44,8 @@ app.use("/api/weighingdata", WeighingDataRoutes);
 // Device route
 app.use("/api/device", DeviceRoutes);
 
-// Item route
-app.use("/api/item", ItemRoutes);
-
 // User token route
-app.use("/api/usertokens", UserTokenRoutes);
+app.use("/api/usertokens", UserTokenRoutes); 
 
 // Error route
 app.use((req, res) => {

@@ -1,7 +1,7 @@
 // ----------Imports----------
 const OperatorModel = require("./Operator");
 const CustomerModel = require("./Customer");
-const WeighingDeviceModel = require("./WeighingDevice");
+const DeviceModel = require("./Device");
 const WeighingDataModel = require("./WeighingData");
 const itemModel = require("./Item");
 const UserTokenModel = require("./UserToken");
@@ -10,7 +10,7 @@ const UserTokenModel = require("./UserToken");
 module.exports = {
   OperatorModel,
   CustomerModel,
-  WeighingDeviceModel,
+  DeviceModel,
   WeighingDataModel,
   itemModel,
   UserTokenModel,

@@ -3,14 +3,14 @@ const express = require("express");
 
 // ----------Custom libraries & modules----------
 const {
-  CreateWeighingDevice,
+  CreateDevice,
   GetAllWeighingDevicesDetails,
   GetWeighingDevicesDataById,
   GetWeighingDeviceDetailsById,
   GetWeighingDevicesRecentDataById,
   UpdateWeighingDevice,
   DeleteWeighingDevice,
-  GetAllDeviceDetails,
+  GetAllDeviceByUserId,
 } = require("../controllers");
 
 const { AuthenticateUser, AuthorizeUser } = require("../middlewares");
@@ -23,7 +23,7 @@ router.post(
   "/add-device",
   AuthenticateUser,
   // AuthorizeUser(["admin", "member"]),
-  CreateWeighingDevice
+  CreateDevice
 );
 
 // Update machine
@@ -39,7 +39,7 @@ router.delete(
 // Get user by id
 router.get("/item_details/all", GetAllWeighingDevicesDetails);
 router.get("/item_details/one/:deviceId", GetWeighingDeviceDetailsById);
-router.get("/all/", GetAllDeviceDetails);
+router.get("/all/", AuthenticateUser, GetAllDeviceByUserId);
 router.get("/all/:deviceId", GetWeighingDevicesDataById);
 router.get("/one/:deviceId", GetWeighingDevicesRecentDataById);
 

@@ -1,9 +1,9 @@
 // ----------Custom libraries and modules----------
 const mongoose = require("mongoose");
-const { WeighingDeviceModel } = require("../models");
+const { DeviceModel } = require("../models");
 
 // ----------Conroller function to added new WeighingDevice----------
-const CreateWeighingDevice = async (req, res) => {
+const CreateDevice = async (req, res) => {
   // Request body
   const {
     title,
@@ -16,21 +16,8 @@ const CreateWeighingDevice = async (req, res) => {
   const { userId } = req.user;
 
   try {
-    // Check if email or phone number already exist
-    const WeighingDevice = await WeighingDeviceModel.findOne({
-      $or: [{ key }],
-    }).exec();
-    if (WeighingDevice) {
-      return res.status(400).json({
-        status: false,
-        error: {
-          message: "Weighing device key already exist!",
-        },
-      });
-    }
-
     // New WeighingDevice
-    const newWeighingDevice = new WeighingDeviceModel({
+    const newWeighingDevice = new DeviceModel({
       title,
       userId: customerId,
       dateCreated,
@@ -66,7 +53,7 @@ const GetAllWeighingDevicesDetails = async (req, res) => {
   try {
     // const WeighingDevice = await WeighingDeviceModel.find().exec();
 
-    const WeighingDevice = await WeighingDeviceModel.aggregate([
+    const WeighingDevice = await DeviceModel.aggregate([
       {
         $lookup: {
           from: "items", // The name of the collection (Assuming it's named 'items')
@@ -108,10 +95,14 @@ const GetAllWeighingDevicesDetails = async (req, res) => {
   }
 };
 
-const GetAllDeviceDetails = async (req, res) => {
+const GetAllDeviceByUserId = async (req, res) => {
+  const { userId } = req.user;
+
   try {
     // Fetch all devices from the WeighingDevices model
-    const devices = await WeighingDeviceModel.find();
+    const devices = await DeviceModel.find({
+      userId,
+    });
 
     return res.status(200).json({
       status: true,
@@ -138,7 +129,7 @@ const GetWeighingDeviceDetailsById = async (req, res) => {
   // console.log(mongoose.mongo.BSONPure.ObjectID.fromHexString(deviceId));
 
   // Check if the WeighingDevice with the specified ID exists
-  const weighingDeviceExists = await WeighingDeviceModel.exists({
+  const weighingDeviceExists = await DeviceModel.exists({
     _id: deviceId,
   });
 
@@ -152,7 +143,7 @@ const GetWeighingDeviceDetailsById = async (req, res) => {
   }
 
   try {
-    const weighingDeviceData = await WeighingDeviceModel.aggregate([
+    const weighingDeviceData = await DeviceModel.aggregate([
       {
         $match: {
           _id: new mongoose.Types.ObjectId(deviceId),
@@ -774,7 +765,7 @@ const GetWeighingDevicesDataById = async (req, res) => {
 
   try {
     // Check if the WeighingDevice with the specified ID exists
-    const weighingDeviceExists = await WeighingDeviceModel.exists({
+    const weighingDeviceExists = await DeviceModel.exists({
       _id: deviceId,
     });
 
@@ -1012,9 +1003,7 @@ const GetWeighingDevicesDataById = async (req, res) => {
       }
     );
 
-    const weighingDeviceData = await WeighingDeviceModel.aggregate(
-      aggregationPipeline
-    );
+    const weighingDeviceData = await DeviceModel.aggregate(aggregationPipeline);
 
     return res.status(200).json({
       status: true,
@@ -1042,7 +1031,7 @@ const GetWeighingDevicesRecentDataById = async (req, res) => {
 
   try {
     // Check if the WeighingDevice with the specified ID exists
-    const weighingDeviceExists = await WeighingDeviceModel.exists({
+    const weighingDeviceExists = await DeviceModel.exists({
       _id: deviceId,
     });
 
@@ -1055,7 +1044,7 @@ const GetWeighingDevicesRecentDataById = async (req, res) => {
       });
     }
 
-    const weighingDeviceData = await WeighingDeviceModel.aggregate([
+    const weighingDeviceData = await DeviceModel.aggregate([
       {
         $match: {
           _id: new mongoose.Types.ObjectId(deviceId),
@@ -1105,7 +1094,7 @@ const UpdateWeighingDevice = async (req, res) => {
   const { deviceId } = req.params;
 
   try {
-    const WeighingDevice = await WeighingDeviceModel.findOne({
+    const WeighingDevice = await DeviceModel.findOne({
       _id: deviceId,
     }).exec();
     if (!WeighingDevice) {
@@ -1114,7 +1103,7 @@ const UpdateWeighingDevice = async (req, res) => {
         error: { message: "Weighing device not found" },
       });
     }
-    const updateWeighingDevice = await WeighingDeviceModel.findOneAndUpdate(
+    const updateWeighingDevice = await DeviceModel.findOneAndUpdate(
       { _id: WeighingDevice._id },
       {
         $set: req.body,
@@ -1146,7 +1135,7 @@ const DeleteWeighingDevice = async (req, res) => {
   // Request parameters
   const { deviceId } = req.params;
   try {
-    const WeighingDevice = await WeighingDeviceModel.findOne({
+    const WeighingDevice = await DeviceModel.findOne({
       _id: deviceId,
     }).exec();
     if (!WeighingDevice) {
@@ -1155,7 +1144,7 @@ const DeleteWeighingDevice = async (req, res) => {
         error: { message: "Weighing device not found" },
       });
     }
-    const deleteWeighingDevice = await WeighingDeviceModel.findOneAndDelete({
+    const deleteWeighingDevice = await DeviceModel.findOneAndDelete({
       _id: deviceId,
     }).exec();
     return res.status(200).json({
@@ -1176,8 +1165,8 @@ const DeleteWeighingDevice = async (req, res) => {
 };
 
 module.exports = {
-  CreateWeighingDevice,
-  GetAllDeviceDetails,
+  CreateDevice,
+  GetAllDeviceByUserId,
   GetAllWeighingDevicesDetails,
   GetWeighingDevicesDataById,
   UpdateWeighingDevice,
