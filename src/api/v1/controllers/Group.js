@@ -1,4 +1,5 @@
 // ----------Custom libraries and modules----------
+const mongoose = require("mongoose");
 const { GroupModel } = require("../models");
 
 // ----------Conroller function to added new group----------
@@ -132,6 +133,73 @@ const GetGroupsByUserId = async (req, res) => {
   }
 };
 
+// ----------Conroller function to get group device by userId----------
+const GetDevicesByGroupId = async (req, res) => {
+  // Request parameters
+  const { groupId } = req.params;
+
+  try {
+    const groupExists = await GroupModel.exists({ _id: groupId });
+
+    if (!groupExists) {
+      return res.status(404).json({
+        status: false,
+        error: {
+          message: "Group not found with the specified ID.",
+        },
+      });
+    }
+
+    const devicesInGroup = await GroupModel.aggregate([
+      {
+        $match: {
+          _id: new mongoose.Types.ObjectId(groupId),
+        },
+      },
+      {
+        $lookup: {
+          from: "devices", // The name of the collection (Assuming it's named 'devices')
+          localField: "deviceList.deviceId",
+          foreignField: "_id",
+          as: "deviceDetails",
+        },
+      },
+      {
+        $unwind: "$deviceDetails",
+      },
+      {
+        $project: {
+          _id: 1, // Exclude the default _id field from the group
+          title: 1, // Include the title field from Group
+          devices: {
+            _id: "$deviceDetails._id",
+            title: "$deviceDetails.title",
+          },
+        },
+      },
+    ]);
+
+    return res.status(200).json({
+      status: true,
+      devicesInGroup,
+      success: {
+        message: "Successfully fetched devices in the group!",
+      },
+    });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({
+      status: false,
+      error: {
+        message: "Failed to fetch devices in the group!",
+      },
+    });
+  }
+};
+
+// Example usage in a route
+// app.get('/groups/:groupId/devices', GetDevicesByGroupId);
+
 // ----------Conroller function to update group by id----------
 const UpdateGroup = async (req, res) => {
   // Request parameters
@@ -224,6 +292,7 @@ module.exports = {
   CreateGroup,
   editGroupDevice,
   GetGroupsByUserId,
+  GetDevicesByGroupId,
   UpdateGroup,
   DeleteGroup,
 };

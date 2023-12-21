@@ -8,11 +8,9 @@ const {
 const {
   CreateDevice,
   GetAllDeviceByUserId,
-  GetAllDevicesDetails,
   GetDevicesDataById,
   UpdateDevice,
   DeleteDevice,
-  GetDeviceDetailsById,
   GetDevicesRecentDataById,
 } = require("./Device");
 
@@ -20,6 +18,7 @@ const {
   CreateGroup,
   editGroupDevice,
   GetGroupsByUserId,
+  GetDevicesByGroupId,
   UpdateGroup,
   DeleteGroup,
 } = require("./Group");
@@ -50,15 +49,14 @@ module.exports = {
   GetAllDeviceByUserId,
   CreateDevice,
   GetAllDeviceByUserId,
-  GetAllDevicesDetails,
   GetDevicesDataById,
   UpdateDevice,
   DeleteDevice,
-  GetDeviceDetailsById,
   GetDevicesRecentDataById,
   CreateGroup,
   editGroupDevice,
   GetGroupsByUserId,
+  GetDevicesByGroupId,
   UpdateGroup,
   DeleteGroup,
   CreateLocationData,

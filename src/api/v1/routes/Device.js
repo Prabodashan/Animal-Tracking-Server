@@ -20,21 +20,19 @@ const router = express.Router();
 
 // Add machine
 router.post(
-  "/add-device",
+  "/adddevice",
   AuthenticateUser,
   // AuthorizeUser(["admin", "member"]),
   CreateDevice
 );
 
 // Update machine
-router.put("/update-device/:deviceId", AuthenticateUser, UpdateDevice);
+router.put("/updatedevice/:deviceId", AuthenticateUser, UpdateDevice);
 
 // Delete machine
-router.delete("/delete-device/:deviceId", AuthenticateUser, DeleteDevice);
+router.delete("/deletedevice/:deviceId", AuthenticateUser, DeleteDevice);
 
 // Get user by id
-router.get("/item_details/all", GetAllDevicesDetails);
-router.get("/item_details/one/:deviceId", GetDeviceDetailsById);
 router.get("/all/", AuthenticateUser, GetAllDeviceByUserId);
 router.get("/all/:deviceId", GetDevicesDataById);
 router.get("/one/:deviceId", GetDevicesRecentDataById);

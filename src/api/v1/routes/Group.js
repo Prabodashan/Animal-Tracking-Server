@@ -6,6 +6,7 @@ const {
   CreateGroup,
   editGroupDevice,
   GetGroupsByUserId,
+  GetDevicesByGroupId,
   UpdateGroup,
   DeleteGroup,
 } = require("../controllers");
@@ -17,22 +18,23 @@ const router = express.Router();
 
 // Add machine
 router.post(
-  "/add-group",
+  "/addgroup",
   AuthenticateUser,
   // AuthorizeUser(["admin", "member"]),
   CreateGroup
 );
 
 // Update machine
-router.put("/edit-group-device/:groupId", AuthenticateUser, editGroupDevice);
+router.put("/editgroupdevice/:groupId", AuthenticateUser, editGroupDevice);
 
 // Update machine
-router.put("/update-group/:groupId", AuthenticateUser, UpdateGroup);
+router.put("/updategroup/:groupId", AuthenticateUser, UpdateGroup);
 
 // Delete machine
-router.delete("/delete-group/:groupId", AuthenticateUser, DeleteGroup);
+router.delete("/deletegroup/:groupId", AuthenticateUser, DeleteGroup);
 
 // Get group by userid
-router.get("/get-groups-user-id", AuthenticateUser, GetGroupsByUserId);
+router.get("/all", AuthenticateUser, GetGroupsByUserId);
+router.get("/one/:groupId", AuthenticateUser, GetDevicesByGroupId);
 
 module.exports = router;

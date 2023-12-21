@@ -63,53 +63,6 @@ const CreateDevice = async (req, res) => {
   }
 };
 
-// ----------Conroller function to get all Devices----------
-const GetAllDevicesDetails = async (req, res) => {
-  try {
-    // const Device = await DeviceModel.find().exec();
-
-    const Device = await DeviceModel.aggregate([
-      {
-        $lookup: {
-          from: "items", // The name of the collection (Assuming it's named 'items')
-          localField: "assignedItem",
-          foreignField: "_id", // Assuming 'assignedItem' is the ID referencing an item
-          as: "itemDetails",
-        },
-      },
-      {
-        $project: {
-          _id: 1, // Exclude the default _id field
-
-          title: 1, // Include the title field from Device
-          imageUrl: 1, // Include the imageUrl field from Device
-          userId: 1, // Include the userId field from Device
-          "itemDetails.title": 1, // Include the title field from Item
-          "itemDetails.imageUrl": 1, // Include the imageUrl field from Item
-          "itemDetails.weight": 1, // Include the weight field from Item
-          // Add or remove fields as needed
-        },
-      },
-    ]).exec();
-
-    return res.status(200).json({
-      status: true,
-      Device,
-      success: {
-        message: "Successfully fetched the weighing devices!",
-      },
-    });
-  } catch (err) {
-    console.log(err);
-    return res.status(500).json({
-      status: false,
-      error: {
-        message: "Failed to fetch the weighing devices!",
-      },
-    });
-  }
-};
-
 const GetAllDeviceByUserId = async (req, res) => {
   const { userId } = req.user;
 
@@ -132,73 +85,6 @@ const GetAllDeviceByUserId = async (req, res) => {
       status: false,
       error: {
         message: "Failed to fetch device details!",
-      },
-    });
-  }
-};
-
-// ----------Conroller function to get weighing device by id----------
-const GetDeviceDetailsById = async (req, res) => {
-  // Request parameters
-  const { deviceId } = req.params;
-  // console.log(mongoose.mongo.BSONPure.ObjectID.fromHexString(deviceId));
-
-  // Check if the Device with the specified ID exists
-  const DeviceExists = await DeviceModel.exists({
-    _id: deviceId,
-  });
-
-  if (!DeviceExists) {
-    return res.status(404).json({
-      status: false,
-      error: {
-        message: "Device not found with the specified ID.",
-      },
-    });
-  }
-
-  try {
-    const DeviceData = await DeviceModel.aggregate([
-      {
-        $match: {
-          _id: new mongoose.Types.ObjectId(deviceId),
-        },
-      },
-      {
-        $lookup: {
-          from: "items", // The name of the collection (Assuming it's named 'weighingdata')
-          localField: "assignedItem",
-          foreignField: "_id",
-          as: "itemDetails",
-        },
-      },
-      {
-        $project: {
-          _id: 1, // Exclude the default _id field
-          title: 1, // Include the title field from Device
-          imageUrl: 1, // Include the imageUrl field from Device
-          userId: 1, // Include the userId field from Device
-          dateCreated: 1,
-          "itemDetails.title": 1, // Include the title field from Item
-          "itemDetails.imageUrl": 1, // Include the imageUrl field from Item
-          "itemDetails.weight": 1, // Include the weight field from Item
-          // Add or remove fields as needed
-        },
-      },
-    ]);
-    return res.status(200).json({
-      status: true,
-      DeviceData,
-      success: {
-        message: "Successfully fetched the weighing devices!",
-      },
-    });
-  } catch (err) {
-    console.log(err);
-    return res.status(500).json({
-      status: false,
-      error: {
-        message: "Failed to fetch the weighing devices!",
       },
     });
   }
@@ -236,13 +122,13 @@ const GetDeviceDetailsById = async (req, res) => {
 //           from: "weighingdatas", // The name of the collection (Assuming it's named 'weighingdata')
 //           localField: "_id",
 //           foreignField: "DeviceId",
-//           as: "deviceData",
+//           as: "locationData",
 //         },
 //       },
 //       {
 //         $project: {
 //           _id: 1,
-//           deviceData: { $reverseArray: "$deviceData" },
+//           locationData: { $reverseArray: "$locationData" },
 //           // Add other fields if needed
 //         },
 //       },
@@ -297,7 +183,7 @@ const GetDeviceDetailsById = async (req, res) => {
 //           from: "weighingdatas",
 //           localField: "_id",
 //           foreignField: "DeviceId",
-//           as: "deviceData",
+//           as: "locationData",
 //         },
 //       },
 //       {
@@ -306,7 +192,7 @@ const GetDeviceDetailsById = async (req, res) => {
 //           title: 1, // Include the title field from Device
 //           imageUrl: 1, // Include the imageUrl field from Device
 //           userId: 1, // Include the userId field from Device
-//           deviceData: 1,
+//           locationData: 1,
 //           // Add other fields if needed
 //         },
 //       },
@@ -318,11 +204,11 @@ const GetDeviceDetailsById = async (req, res) => {
 
 //       aggregationPipeline.push(
 //         {
-//           $unwind: "$deviceData",
+//           $unwind: "$locationData",
 //         },
 //         {
 //           $match: {
-//             "deviceData.createdAt": {
+//             "locationData.createdAt": {
 //               $gte: today,
 //               $lt: new Date(today.getTime() + 24 * 60 * 60 * 1000),
 //             },
@@ -334,7 +220,7 @@ const GetDeviceDetailsById = async (req, res) => {
 //             title: { $first: "$title" },
 //             imageUrl: { $first: "$imageUrl" },
 //             userId: { $first: "$userId" },
-//             deviceData: { $push: "$deviceData" },
+//             locationData: { $push: "$locationData" },
 //             // Add other fields if needed
 //           },
 //         }
@@ -395,7 +281,7 @@ const GetDeviceDetailsById = async (req, res) => {
 //           from: "weighingdatas",
 //           localField: "_id",
 //           foreignField: "DeviceId",
-//           as: "deviceData",
+//           as: "locationData",
 //         },
 //       },
 //       {
@@ -404,7 +290,7 @@ const GetDeviceDetailsById = async (req, res) => {
 //           title: 1,
 //           imageUrl: 1,
 //           userId: 1,
-//           deviceData: 1,
+//           locationData: 1,
 //           // Add other fields if needed
 //         },
 //       },
@@ -416,11 +302,11 @@ const GetDeviceDetailsById = async (req, res) => {
 
 //       aggregationPipeline.push(
 //         {
-//           $unwind: "$deviceData",
+//           $unwind: "$locationData",
 //         },
 //         {
 //           $match: {
-//             "deviceData.createdAt": {
+//             "locationData.createdAt": {
 //               $gte: today,
 //               $lt: new Date(today.getTime() + 24 * 60 * 60 * 1000),
 //             },
@@ -432,7 +318,7 @@ const GetDeviceDetailsById = async (req, res) => {
 //             title: { $first: "$title" },
 //             imageUrl: { $first: "$imageUrl" },
 //             userId: { $first: "$userId" },
-//             deviceData: { $push: "$deviceData" },
+//             locationData: { $push: "$locationData" },
 //             // Add other fields if needed
 //           },
 //         }
@@ -444,11 +330,11 @@ const GetDeviceDetailsById = async (req, res) => {
 
 //       aggregationPipeline.push(
 //         {
-//           $unwind: "$deviceData",
+//           $unwind: "$locationData",
 //         },
 //         {
 //           $match: {
-//             "deviceData.createdAt": {
+//             "locationData.createdAt": {
 //               $gte: startOfWeek,
 //               $lt: new Date(startOfWeek.getTime() + 7 * 24 * 60 * 60 * 1000), // End of the current week
 //             },
@@ -460,7 +346,7 @@ const GetDeviceDetailsById = async (req, res) => {
 //             title: { $first: "$title" },
 //             imageUrl: { $first: "$imageUrl" },
 //             userId: { $first: "$userId" },
-//             deviceData: { $push: "$deviceData" },
+//             locationData: { $push: "$locationData" },
 //             // Add other fields if needed
 //           },
 //         }
@@ -520,7 +406,7 @@ const GetDeviceDetailsById = async (req, res) => {
 //           from: "weighingdatas",
 //           localField: "_id",
 //           foreignField: "DeviceId",
-//           as: "deviceData",
+//           as: "locationData",
 //         },
 //       },
 //       {
@@ -529,7 +415,7 @@ const GetDeviceDetailsById = async (req, res) => {
 //           title: 1,
 //           imageUrl: 1,
 //           userId: 1,
-//           deviceData: 1,
+//           locationData: 1,
 //           // Add other fields if needed
 //         },
 //       },
@@ -541,11 +427,11 @@ const GetDeviceDetailsById = async (req, res) => {
 
 //       aggregationPipeline.push(
 //         {
-//           $unwind: "$deviceData",
+//           $unwind: "$locationData",
 //         },
 //         {
 //           $match: {
-//             "deviceData.createdAt": {
+//             "locationData.createdAt": {
 //               $gte: today,
 //               $lt: new Date(today.getTime() + 24 * 60 * 60 * 1000),
 //             },
@@ -557,7 +443,7 @@ const GetDeviceDetailsById = async (req, res) => {
 //             title: { $first: "$title" },
 //             imageUrl: { $first: "$imageUrl" },
 //             userId: { $first: "$userId" },
-//             deviceData: { $push: "$deviceData" },
+//             locationData: { $push: "$locationData" },
 //             // Add other fields if needed
 //           },
 //         }
@@ -569,11 +455,11 @@ const GetDeviceDetailsById = async (req, res) => {
 
 //       aggregationPipeline.push(
 //         {
-//           $unwind: "$deviceData",
+//           $unwind: "$locationData",
 //         },
 //         {
 //           $match: {
-//             "deviceData.createdAt": {
+//             "locationData.createdAt": {
 //               $gte: startOfWeek,
 //               $lt: new Date(startOfWeek.getTime() + 7 * 24 * 60 * 60 * 1000), // End of the current week
 //             },
@@ -581,7 +467,7 @@ const GetDeviceDetailsById = async (req, res) => {
 //         },
 //         {
 //           $sort: {
-//             "deviceData.createdAt": -1,
+//             "locationData.createdAt": -1,
 //           },
 //         },
 //         {
@@ -591,14 +477,14 @@ const GetDeviceDetailsById = async (req, res) => {
 //               date: {
 //                 $dateToString: {
 //                   format: "%Y-%m-%d",
-//                   date: "$deviceData.createdAt",
+//                   date: "$locationData.createdAt",
 //                 },
 //               },
 //             },
 //             title: { $first: "$title" },
 //             imageUrl: { $first: "$imageUrl" },
 //             userId: { $first: "$userId" },
-//             deviceData: { $first: "$deviceData" },
+//             locationData: { $first: "$locationData" },
 //             // Add other fields if needed
 //           },
 //         }
@@ -659,7 +545,7 @@ const GetDeviceDetailsById = async (req, res) => {
 //           from: "weighingdatas",
 //           localField: "_id",
 //           foreignField: "DeviceId",
-//           as: "deviceData",
+//           as: "locationData",
 //         },
 //       },
 //       {
@@ -668,7 +554,7 @@ const GetDeviceDetailsById = async (req, res) => {
 //           title: 1,
 //           imageUrl: 1,
 //           userId: 1,
-//           deviceData: 1,
+//           locationData: 1,
 //         },
 //       },
 //     ];
@@ -679,11 +565,11 @@ const GetDeviceDetailsById = async (req, res) => {
 
 //       aggregationPipeline.push(
 //         {
-//           $unwind: "$deviceData",
+//           $unwind: "$locationData",
 //         },
 //         {
 //           $match: {
-//             "deviceData.createdAt": {
+//             "locationData.createdAt": {
 //               $gte: today,
 //               $lt: new Date(today.getTime() + 24 * 60 * 60 * 1000),
 //             },
@@ -695,7 +581,7 @@ const GetDeviceDetailsById = async (req, res) => {
 //             title: { $first: "$title" },
 //             imageUrl: { $first: "$imageUrl" },
 //             userId: { $first: "$userId" },
-//             deviceData: { $push: "$deviceData" },
+//             locationData: { $push: "$locationData" },
 //             // Add other fields if needed
 //           },
 //         }
@@ -707,11 +593,11 @@ const GetDeviceDetailsById = async (req, res) => {
 
 //       aggregationPipeline.push(
 //         {
-//           $unwind: "$deviceData",
+//           $unwind: "$locationData",
 //         },
 //         {
 //           $match: {
-//             "deviceData.createdAt": {
+//             "locationData.createdAt": {
 //               $gte: startOfWeek,
 //               $lt: new Date(startOfWeek.getTime() + 7 * 24 * 60 * 60 * 1000), // End of the current week
 //             },
@@ -719,7 +605,7 @@ const GetDeviceDetailsById = async (req, res) => {
 //         },
 //         {
 //           $sort: {
-//             "deviceData.createdAt": 1,
+//             "locationData.createdAt": 1,
 //           },
 //         },
 //         {
@@ -729,14 +615,14 @@ const GetDeviceDetailsById = async (req, res) => {
 //               date: {
 //                 $dateToString: {
 //                   format: "%Y-%m-%d",
-//                   date: "$deviceData.createdAt",
+//                   date: "$locationData.createdAt",
 //                 },
 //               },
 //             },
 //             title: { $first: "$title" },
 //             imageUrl: { $first: "$imageUrl" },
 //             userId: { $first: "$userId" },
-//             deviceData: { $last: "$deviceData" },
+//             locationData: { $last: "$locationData" },
 //           },
 //         },
 //         {
@@ -745,7 +631,7 @@ const GetDeviceDetailsById = async (req, res) => {
 //             title: { $first: "$title" },
 //             imageUrl: { $first: "$imageUrl" },
 //             userId: { $first: "$userId" },
-//             deviceData: { $push: "$deviceData" },
+//             locationData: { $push: "$locationData" },
 //           },
 //         }
 //       );
@@ -801,10 +687,10 @@ const GetDevicesDataById = async (req, res) => {
       },
       {
         $lookup: {
-          from: "weighingdatas",
+          from: "Locations",
           localField: "_id",
-          foreignField: "DeviceId",
-          as: "deviceData",
+          foreignField: "deviceId",
+          as: "locationData",
         },
       },
       {
@@ -813,7 +699,7 @@ const GetDevicesDataById = async (req, res) => {
           title: 1,
           imageUrl: 1,
           userId: 1,
-          deviceData: 1,
+          locationData: 1,
         },
       },
     ];
@@ -824,11 +710,11 @@ const GetDevicesDataById = async (req, res) => {
 
       // aggregationPipeline.push(
       //   {
-      //     $unwind: "$deviceData",
+      //     $unwind: "$locationData",
       //   },
       //   {
       //     $match: {
-      //       "deviceData.createdAt": {
+      //       "locationData.createdAt": {
       //         $gte: today,
       //         $lt: new Date(today.getTime() + 24 * 60 * 60 * 1000),
       //       },
@@ -840,7 +726,7 @@ const GetDevicesDataById = async (req, res) => {
       //       title: { $first: "$title" },
       //       imageUrl: { $first: "$imageUrl" },
       //       userId: { $first: "$userId" },
-      //       deviceData: { $push: "$deviceData" },
+      //       locationData: { $push: "$locationData" },
       //     },
       //   }
       // );
@@ -850,11 +736,11 @@ const GetDevicesDataById = async (req, res) => {
 
       aggregationPipeline.push(
         {
-          $unwind: "$deviceData",
+          $unwind: "$locationData",
         },
         {
           $match: {
-            "deviceData.createdAt": {
+            "locationData.createdAt": {
               $gte: today,
               $lt: new Date(today.getTime() + 24 * 60 * 60 * 1000),
             },
@@ -862,7 +748,7 @@ const GetDevicesDataById = async (req, res) => {
         },
         {
           $sort: {
-            "deviceData.createdAt": 1,
+            "locationData.createdAt": 1,
           },
         },
         {
@@ -870,13 +756,13 @@ const GetDevicesDataById = async (req, res) => {
             _id: {
               _id: "$_id",
               hour: {
-                $hour: "$deviceData.createdAt",
+                $hour: "$locationData.createdAt",
               },
             },
             title: { $first: "$title" },
             imageUrl: { $first: "$imageUrl" },
             userId: { $first: "$userId" },
-            deviceData: { $last: "$deviceData" },
+            locationData: { $last: "$locationData" },
           },
         },
         {
@@ -885,7 +771,7 @@ const GetDevicesDataById = async (req, res) => {
             title: { $first: "$title" },
             imageUrl: { $first: "$imageUrl" },
             userId: { $first: "$userId" },
-            deviceData: { $push: "$deviceData" },
+            locationData: { $push: "$locationData" },
           },
         }
       );
@@ -896,11 +782,11 @@ const GetDevicesDataById = async (req, res) => {
 
       aggregationPipeline.push(
         {
-          $unwind: "$deviceData",
+          $unwind: "$locationData",
         },
         {
           $match: {
-            "deviceData.createdAt": {
+            "locationData.createdAt": {
               $gte: startOfWeek,
               $lt: new Date(startOfWeek.getTime() + 7 * 24 * 60 * 60 * 1000), // End of the current week
             },
@@ -908,7 +794,7 @@ const GetDevicesDataById = async (req, res) => {
         },
         {
           $sort: {
-            "deviceData.createdAt": 1,
+            "locationData.createdAt": 1,
           },
         },
         {
@@ -918,14 +804,14 @@ const GetDevicesDataById = async (req, res) => {
               date: {
                 $dateToString: {
                   format: "%Y-%m-%d",
-                  date: "$deviceData.createdAt",
+                  date: "$locationData.createdAt",
                 },
               },
             },
             title: { $first: "$title" },
             imageUrl: { $first: "$imageUrl" },
             userId: { $first: "$userId" },
-            deviceData: { $last: "$deviceData" },
+            locationData: { $last: "$locationData" },
           },
         },
         {
@@ -934,7 +820,7 @@ const GetDevicesDataById = async (req, res) => {
             title: { $first: "$title" },
             imageUrl: { $first: "$imageUrl" },
             userId: { $first: "$userId" },
-            deviceData: { $push: "$deviceData" },
+            locationData: { $push: "$locationData" },
           },
         }
       );
@@ -945,11 +831,11 @@ const GetDevicesDataById = async (req, res) => {
 
       aggregationPipeline.push(
         {
-          $unwind: "$deviceData",
+          $unwind: "$locationData",
         },
         {
           $match: {
-            "deviceData.createdAt": {
+            "locationData.createdAt": {
               $gte: startOfMonth,
               $lt: new Date(
                 startOfMonth.getFullYear(),
@@ -965,7 +851,7 @@ const GetDevicesDataById = async (req, res) => {
         },
         {
           $sort: {
-            "deviceData.createdAt": 1,
+            "locationData.createdAt": 1,
           },
         },
         {
@@ -975,14 +861,14 @@ const GetDevicesDataById = async (req, res) => {
               date: {
                 $dateToString: {
                   format: "%Y-%m-%d",
-                  date: "$deviceData.createdAt",
+                  date: "$locationData.createdAt",
                 },
               },
             },
             title: { $first: "$title" },
             imageUrl: { $first: "$imageUrl" },
             userId: { $first: "$userId" },
-            deviceData: { $last: "$deviceData" },
+            locationData: { $last: "$locationData" },
           },
         },
         {
@@ -991,7 +877,7 @@ const GetDevicesDataById = async (req, res) => {
             title: { $first: "$title" },
             imageUrl: { $first: "$imageUrl" },
             userId: { $first: "$userId" },
-            deviceData: { $push: "$deviceData" },
+            locationData: { $push: "$locationData" },
           },
         }
       );
@@ -1000,11 +886,11 @@ const GetDevicesDataById = async (req, res) => {
     // Add a $sort stage to sort by createdAt in ascending order
     aggregationPipeline.push(
       {
-        $unwind: "$deviceData",
+        $unwind: "$locationData",
       },
       {
         $sort: {
-          "deviceData.createdAt": 1,
+          "locationData.createdAt": 1,
         },
       },
       {
@@ -1013,7 +899,7 @@ const GetDevicesDataById = async (req, res) => {
           title: { $first: "$title" },
           imageUrl: { $first: "$imageUrl" },
           userId: { $first: "$userId" },
-          deviceData: { $push: "$deviceData" },
+          locationData: { $push: "$locationData" },
         },
       }
     );
@@ -1070,15 +956,15 @@ const GetDevicesRecentDataById = async (req, res) => {
           from: "weighingdatas", // The name of the collection (Assuming it's named 'weighingdata')
           localField: "_id",
           foreignField: "DeviceId",
-          as: "deviceData",
+          as: "locationData",
         },
       },
       {
-        $unwind: "$deviceData", // Unwind to separate documents for each entry in deviceData array
+        $unwind: "$locationData", // Unwind to separate documents for each entry in locationData array
       },
       {
         $sort: {
-          "deviceData.createdAt": -1, // Sort by createdAt in descending order
+          "locationData.createdAt": -1, // Sort by createdAt in descending order
         },
       },
       {
@@ -1182,10 +1068,8 @@ const DeleteDevice = async (req, res) => {
 module.exports = {
   CreateDevice,
   GetAllDeviceByUserId,
-  GetAllDevicesDetails,
   GetDevicesDataById,
   UpdateDevice,
   DeleteDevice,
-  GetDeviceDetailsById,
   GetDevicesRecentDataById,
 };
