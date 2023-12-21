@@ -1,41 +1,30 @@
 // ----------Custom libraries and modules----------
-const { itemModel } = require("../models");
+const { GroupModel } = require("../models");
 
-// ----------Conroller function to added new item----------
-const Createitem = async (req, res) => {
+// ----------Conroller function to added new group----------
+const CreateGroup = async (req, res) => {
   // Request body
-  const {
-    title,
-    imageUrl,
-    weight,
-    dateCreated,
-    timeCreated,
-    dateUpdated,
-    timeUpdated,
-  } = req.body;
+  const { title, dateCreated, timeCreated, dateUpdated, timeUpdated } =
+    req.body;
   const { userId } = req.user;
 
   try {
     // Check if key already exist
-    const item = await itemModel
-      .findOne({
-        $or: [{ title }],
-      })
-      .exec();
-    if (item) {
+    const group = await GroupModel.findOne({
+      $or: [{ title }],
+    }).exec();
+    if (group) {
       return res.status(400).json({
         status: false,
         error: {
-          message: "item already exist!",
+          message: "group already exist!",
         },
       });
     }
 
-    // New item
-    const newitem = new itemModel({
+    // New Group
+    const newGroup = new GroupModel({
       title,
-      imageUrl,
-      weight,
       dateCreated,
       timeCreated,
       dateUpdated,
@@ -43,14 +32,14 @@ const Createitem = async (req, res) => {
       userId,
     });
 
-    // Save new item to the database
-    const saveditem = await newitem.save();
+    // Save new Group to the database
+    const savedGroup = await newGroup.save();
 
     return res.status(201).json({
       status: true,
-      item: saveditem,
+      Group: savedGroup,
       success: {
-        message: "Successfully added a new item!",
+        message: "Successfully added a new group!",
       },
     });
   } catch (err) {
@@ -58,21 +47,51 @@ const Createitem = async (req, res) => {
     return res.status(500).json({
       status: false,
       error: {
-        message: "Failed to add a new item!",
+        message: "Failed to add a new group!",
       },
     });
   }
 };
 
-// ----------Conroller function to get all items----------
-const GetAllitems = async (req, res) => {
+// ----------Conroller function to added new device to group----------
+const editGroupDevice = async (req, res) => {
+  // Request body
+  const { devices } = req.body; // Expecting an array of devices
+  // Request parameters
+  const { groupId } = req.params;
+
   try {
-    const item = await itemModel.find().exec();
-    return res.status(200).json({
+    // Check if group exist
+    const group = await GroupModel.findOne({
+      _id: groupId,
+    }).exec();
+    if (!group) {
+      return res.status(404).json({
+        status: true,
+        error: { message: "group not found" },
+      });
+    }
+
+    // Validate if devices is an array
+    if (!Array.isArray(devices)) {
+      return res.status(400).json({
+        status: false,
+        error: { message: "Invalid devices format. Expecting an array." },
+      });
+    }
+
+    // Clear previous device IDs and push the new devices
+    group.deviceList = [];
+    group.deviceList.push(...devices);
+
+    // Save new Group to the database
+    const savedGroup = await group.save();
+
+    return res.status(201).json({
       status: true,
-      item,
+      Group: savedGroup,
       success: {
-        message: "Successfully fetched the items!",
+        message: "Successfully added a device to group!",
       },
     });
   } catch (err) {
@@ -80,28 +99,26 @@ const GetAllitems = async (req, res) => {
     return res.status(500).json({
       status: false,
       error: {
-        message: "Failed to fetch the items!",
+        message: "Failed to add a device to group!",
       },
     });
   }
 };
 
-// ----------Conroller function to get item by id----------
-const GetitemsByUserId = async (req, res) => {
+// ----------Conroller function to get group by id----------
+const GetGroupsByUserId = async (req, res) => {
   // Request parameters
   const { userId } = req.user;
 
   try {
-    const items = await itemModel
-      .find({
-        userId: userId,
-      })
-      .exec();
+    const groups = await GroupModel.find({
+      userId: userId,
+    }).exec();
     return res.status(200).json({
       status: true,
-      items,
+      groups,
       success: {
-        message: "Successfully fetched the items!",
+        message: "Successfully fetched the groups!",
       },
     });
   } catch (err) {
@@ -109,79 +126,87 @@ const GetitemsByUserId = async (req, res) => {
     return res.status(500).json({
       status: false,
       error: {
-        message: "Failed to fetch the items!",
+        message: "Failed to fetch the groups!",
       },
     });
   }
 };
 
-// ----------Conroller function to update item by id----------
-const Updateitem = async (req, res) => {
+// ----------Conroller function to update group by id----------
+const UpdateGroup = async (req, res) => {
   // Request parameters
-  const { itemId } = req.params;
+  const { groupId } = req.params;
+  // Extract the title from the request body
+  const { title, dateUpdated, timeUpdated } = req.body;
+
   try {
-    const item = await itemModel
-      .findOne({
-        _id: itemId,
-      })
-      .exec();
-    if (!item) {
+    const group = await GroupModel.findOne({
+      _id: groupId,
+    }).exec();
+
+    if (!group) {
       return res.status(404).json({
         status: true,
-        error: { message: "item not found" },
+        error: { message: "Group not found" },
       });
     }
-    const updateitem = await itemModel.findOneAndUpdate(
-      { _id: itemId },
-      {
-        $set: req.body,
-      },
-      {
-        new: false,
-      }
-    );
+
+    // Check if the title is provided in the request body
+    if (!title) {
+      return res.status(400).json({
+        status: false,
+        error: { message: "Title is required for updating the group" },
+      });
+    }
+
+    // Update only the title field
+    group.title = title;
+    // Update the group's timestamps
+    group.dateUpdated = dateUpdated;
+    group.timeUpdated = timeUpdated;
+
+    // Save the updated group to the database
+    const updatedGroup = await group.save();
+
     return res.status(200).json({
       status: true,
-      updateitem,
+      updatedGroup,
       success: {
-        message: "Successfully updated the item!",
+        message: "Successfully updated the group title!",
       },
     });
   } catch (error) {
+    console.error(error);
     return res.status(500).json({
       status: false,
       error: {
-        message: "Failed to update the item!",
+        message: "Failed to update the group title!",
       },
     });
   }
 };
 
-// ----------Conroller function to delete item by id----------
-const Deleteitem = async (req, res) => {
+// ----------Conroller function to delete group by id----------
+const DeleteGroup = async (req, res) => {
   // Request parameters
-  const { itemId } = req.params;
+  const { groupId } = req.params;
   try {
-    const item = await itemModel
-      .findOne({
-        _id: itemId,
-      })
-      .exec();
-    if (!item) {
+    const group = await GroupModel.findOne({
+      _id: groupId,
+    }).exec();
+    if (!group) {
       return res.status(404).json({
         status: true,
-        error: { message: "item not found" },
+        error: { message: "group not found" },
       });
     }
-    const deleteitem = await itemModel
-      .findOneAndDelete({
-        _id: itemId,
-      })
-      .exec();
+    const deleteGroup = await GroupModel.findOneAndDelete({
+      _id: groupId,
+    }).exec();
     return res.status(200).json({
       status: true,
       success: {
-        message: "item successfully deleted",
+        message: "group successfully deleted",
       },
     });
   } catch (error) {
@@ -189,16 +214,16 @@ const Deleteitem = async (req, res) => {
     return res.status(500).json({
       status: false,
       error: {
-        message: "Failed to delete the item!",
+        message: "Failed to delete the group!",
       },
     });
   }
 };
 
 module.exports = {
-  Createitem,
-  GetAllitems,
-  GetitemsByUserId,
-  Updateitem,
-  Deleteitem,
+  CreateGroup,
+  editGroupDevice,
+  GetGroupsByUserId,
+  UpdateGroup,
+  DeleteGroup,
 };

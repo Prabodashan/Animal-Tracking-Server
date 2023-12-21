@@ -8,18 +8,26 @@ const {
 const {
   CreateDevice,
   GetAllDeviceByUserId,
-  GetAllWeighingDevicesDetails,
-  GetWeighingDevicesDataById,
-  UpdateWeighingDevice,
-  DeleteWeighingDevice,
-  GetWeighingDeviceDetailsById,
-  GetWeighingDevicesRecentDataById,
+  GetAllDevicesDetails,
+  GetDevicesDataById,
+  UpdateDevice,
+  DeleteDevice,
+  GetDeviceDetailsById,
+  GetDevicesRecentDataById,
 } = require("./Device");
+
 const {
-  CreateWeighingData,
-  UpdateWeighingData,
-  DeleteWeighingData,
-} = require("./WeighingData");
+  CreateGroup,
+  editGroupDevice,
+  GetGroupsByUserId,
+  UpdateGroup,
+  DeleteGroup,
+} = require("./Group");
+const {
+  CreateLocationData,
+  UpdateLocationData,
+  DeleteLocationData,
+} = require("./Location");
 
 const {
   GenerateAccessToken,
@@ -40,13 +48,20 @@ module.exports = {
   GetUserInfoByToken,
   CreateDevice,
   GetAllDeviceByUserId,
-  GetAllWeighingDevicesDetails,
-  GetWeighingDevicesDataById,
-  GetWeighingDeviceDetailsById,
-  GetWeighingDevicesRecentDataById,
-  UpdateWeighingDevice,
-  DeleteWeighingDevice,
-  CreateWeighingData,
-  UpdateWeighingData,
-  DeleteWeighingData,
+  CreateDevice,
+  GetAllDeviceByUserId,
+  GetAllDevicesDetails,
+  GetDevicesDataById,
+  UpdateDevice,
+  DeleteDevice,
+  GetDeviceDetailsById,
+  GetDevicesRecentDataById,
+  CreateGroup,
+  editGroupDevice,
+  GetGroupsByUserId,
+  UpdateGroup,
+  DeleteGroup,
+  CreateLocationData,
+  UpdateLocationData,
+  DeleteLocationData,
 };

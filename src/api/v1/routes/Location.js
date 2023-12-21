@@ -3,9 +3,9 @@ const express = require("express");
 
 // ----------Custom libraries & modules----------
 const {
-  CreateWeighingData,
-  UpdateWeighingData,
-  DeleteWeighingData,
+  CreateLocationData,
+  UpdateLocationData,
+  DeleteLocationData,
 } = require("../controllers");
 
 const { AuthenticateUser, AuthorizeUser } = require("../middlewares");
@@ -18,21 +18,21 @@ router.get(
   "/add-data",
   // AuthenticateUser,
   // AuthorizeUser(["admin", "member"]),
-  CreateWeighingData
+  CreateLocationData
 );
 
 // Update weighing data
 router.put(
-  "/update-data/:weighingDataId",
+  "/update-data/:locationDataId",
   AuthenticateUser,
-  UpdateWeighingData
+  UpdateLocationData
 );
 
 // Delete weighing data
 router.delete(
-  "/delete-device/:weighingDataId",
+  "/delete-data/:locationDataId",
   AuthenticateUser,
-  DeleteWeighingData
+  DeleteLocationData
 );
 
 module.exports = router;

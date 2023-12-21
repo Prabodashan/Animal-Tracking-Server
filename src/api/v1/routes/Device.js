@@ -4,13 +4,13 @@ const express = require("express");
 // ----------Custom libraries & modules----------
 const {
   CreateDevice,
-  GetAllWeighingDevicesDetails,
-  GetWeighingDevicesDataById,
-  GetWeighingDeviceDetailsById,
-  GetWeighingDevicesRecentDataById,
-  UpdateWeighingDevice,
-  DeleteWeighingDevice,
   GetAllDeviceByUserId,
+  GetAllDevicesDetails,
+  GetDevicesDataById,
+  UpdateDevice,
+  DeleteDevice,
+  GetDeviceDetailsById,
+  GetDevicesRecentDataById,
 } = require("../controllers");
 
 const { AuthenticateUser, AuthorizeUser } = require("../middlewares");
@@ -27,20 +27,16 @@ router.post(
 );
 
 // Update machine
-router.put("/update-device/:deviceId", AuthenticateUser, UpdateWeighingDevice);
+router.put("/update-device/:deviceId", AuthenticateUser, UpdateDevice);
 
 // Delete machine
-router.delete(
-  "/delete-device/:deviceId",
-  AuthenticateUser,
-  DeleteWeighingDevice
-);
+router.delete("/delete-device/:deviceId", AuthenticateUser, DeleteDevice);
 
 // Get user by id
-router.get("/item_details/all", GetAllWeighingDevicesDetails);
-router.get("/item_details/one/:deviceId", GetWeighingDeviceDetailsById);
+router.get("/item_details/all", GetAllDevicesDetails);
+router.get("/item_details/one/:deviceId", GetDeviceDetailsById);
 router.get("/all/", AuthenticateUser, GetAllDeviceByUserId);
-router.get("/all/:deviceId", GetWeighingDevicesDataById);
-router.get("/one/:deviceId", GetWeighingDevicesRecentDataById);
+router.get("/all/:deviceId", GetDevicesDataById);
+router.get("/one/:deviceId", GetDevicesRecentDataById);
 
 module.exports = router;

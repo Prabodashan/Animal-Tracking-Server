@@ -10,9 +10,9 @@ const {
   CustomerRoutes,
   OperatorRoutes,
   DeviceRoutes,
-  WeighingDataRoutes,
+  LocationDataRoutes,
   UserTokenRoutes,
-  ItemRoutes,
+  GroupRoutes,
 } = require("./api/v1/routes");
 
 // ----------Global instances----------
@@ -39,13 +39,16 @@ app.use("/api/customers", CustomerRoutes);
 app.use("/api/operator", OperatorRoutes);
 
 // Device data route
-app.use("/api/weighingdata", WeighingDataRoutes);
+app.use("/api/locationdata", LocationDataRoutes);
 
 // Device route
 app.use("/api/device", DeviceRoutes);
 
+// Device route
+app.use("/api/group", GroupRoutes);
+
 // User token route
-app.use("/api/usertokens", UserTokenRoutes); 
+app.use("/api/usertokens", UserTokenRoutes);
 
 // Error route
 app.use((req, res) => {

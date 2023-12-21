@@ -2,14 +2,14 @@
 const mongoose = require("mongoose");
 
 // ----------User schema----------
-const WeighingDeviceSchema = new mongoose.Schema(
+const DeviceSchema = new mongoose.Schema(
   {
     title: {
       type: String,
       required: true,
     },
     userId: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
       required: true,
     },
     dateCreated: {
@@ -37,16 +37,14 @@ const WeighingDeviceSchema = new mongoose.Schema(
 );
 
 // Define a pre 'remove' hook
-WeighingDeviceSchema.pre("remove", async function (next) {
+DeviceSchema.pre("remove", async function (next) {
   try {
     // Delete associated WeighingData documents
-    await mongoose
-      .model("WeighingData")
-      .deleteMany({ weighingDeviceId: this._id });
+    await mongoose.model("Location").deleteMany({ deviceId: this._id });
     next();
   } catch (error) {
     next(error);
   }
 });
 
-module.exports = mongoose.model("WeighingDevice", WeighingDeviceSchema);
+module.exports = mongoose.model("Device", DeviceSchema);

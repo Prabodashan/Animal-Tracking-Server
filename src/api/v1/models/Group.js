@@ -2,26 +2,22 @@
 const mongoose = require("mongoose");
 
 // ----------User schema----------
-const WeighingDataSchema = new mongoose.Schema(
+const GroupSchema = new mongoose.Schema(
   {
-    batteryPercentage: {
+    title: {
       type: String,
       required: true,
     },
-    batteryVoltage: {
+    deviceList: [
+      {
+        deviceId: {
+          type: mongoose.Schema.Types.ObjectId,
+          required: true,
+        },
+      },
+    ],
+    userId: {
       type: String,
-      required: true,
-    },
-    totalWeight: {
-      type: String,
-      required: true,
-    },
-    itemCount: {
-      type: Number,
-      required: true,
-    },
-    weighingDeviceId: {
-      type: mongoose.Schema.Types.ObjectId,
       required: true,
     },
     dateCreated: {
@@ -32,9 +28,16 @@ const WeighingDataSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    dateUpdated: {
+      type: String,
+      required: true,
+    },
+    timeUpdated: {
+      type: String,
+      required: true,
+    },
   },
   { timestamps: true }
 );
 
-module.exports = mongoose.model("WeighingData", WeighingDataSchema);
-
+module.exports = mongoose.model("Group", GroupSchema);

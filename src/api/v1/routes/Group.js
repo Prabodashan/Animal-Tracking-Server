@@ -3,11 +3,11 @@ const express = require("express");
 
 // ----------Custom libraries & modules----------
 const {
-  Createitem,
-  GetAllitems,
-  GetitemsByUserId,
-  Updateitem,
-  Deleteitem,
+  CreateGroup,
+  editGroupDevice,
+  GetGroupsByUserId,
+  UpdateGroup,
+  DeleteGroup,
 } = require("../controllers");
 
 const { AuthenticateUser, AuthorizeUser } = require("../middlewares");
@@ -17,20 +17,22 @@ const router = express.Router();
 
 // Add machine
 router.post(
-  "/add-item",
+  "/add-group",
   AuthenticateUser,
   // AuthorizeUser(["admin", "member"]),
-  Createitem
+  CreateGroup
 );
 
 // Update machine
-router.put("/update-device/:itemId", AuthenticateUser, Updateitem);
+router.put("/edit-group-device/:groupId", AuthenticateUser, editGroupDevice);
+
+// Update machine
+router.put("/update-group/:groupId", AuthenticateUser, UpdateGroup);
 
 // Delete machine
-router.delete("/delete-device/:itemId", AuthenticateUser, Deleteitem);
+router.delete("/delete-group/:groupId", AuthenticateUser, DeleteGroup);
 
-// Get user by id
-router.get("/get-all-items", AuthenticateUser, GetAllitems);
-router.get("/get-items-user-id", AuthenticateUser, GetitemsByUserId);
+// Get group by userid
+router.get("/get-groups-user-id", AuthenticateUser, GetGroupsByUserId);
 
 module.exports = router;
