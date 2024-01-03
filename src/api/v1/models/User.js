@@ -2,7 +2,7 @@
 const mongoose = require("mongoose");
 
 // ----------User schema----------
-const OperatorSchema = new mongoose.Schema(
+const UserSchema = new mongoose.Schema(
   {
     fullName: {
       type: String,
@@ -13,6 +13,10 @@ const OperatorSchema = new mongoose.Schema(
       required: true,
     },
     password: {
+      type: String,
+      required: true,
+    },
+    address: {
       type: String,
       required: true,
     },
@@ -27,4 +31,4 @@ const OperatorSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-module.exports = mongoose.model("Operator", OperatorSchema);
+module.exports = mongoose.model("User", UserSchema);

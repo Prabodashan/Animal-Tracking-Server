@@ -2,17 +2,18 @@
 const bcrypt = require("bcrypt");
 
 // ----------Custom libraries and modules----------
-const { OperatorModel, UserTokenModel } = require("../models");
+const { UserModel, UserTokenModel } = require("../models");
 const { GenerateTokens } = require("../helpers");
 
 // ----------Conroller function to register new user----------
-const RegisterOperator = async (req, res) => {
+const RegisterUser = async (req, res) => {
   // Request body
-  const { fullName, emailAddress, password, phoneNumber, userRole } = req.body;
+  const { fullName, emailAddress, address, password, phoneNumber, userRole } =
+    req.body;
 
   try {
     // Check if email or phone number already exist
-    const user = await OperatorModel.findOne({
+    const user = await UserModel.findOne({
       $or: [{ emailAddress }, { phoneNumber }],
     }).exec();
     if (user) {
@@ -28,9 +29,10 @@ const RegisterOperator = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 8);
 
     // New user
-    const newUser = new OperatorModel({
+    const newUser = new UserModel({
       fullName,
       emailAddress,
+      address,
       password: hashedPassword,
       phoneNumber,
       userRole,
@@ -58,13 +60,13 @@ const RegisterOperator = async (req, res) => {
 };
 
 // ----------Conroller function to login the user----------
-const LoginOperator = async (req, res) => {
+const LoginUser = async (req, res) => {
   // Request body
   const { emailAddress, password } = req.body;
 
   try {
     // Check if email already exists
-    const user = await OperatorModel.findOne({ emailAddress }).exec();
+    const user = await UserModel.findOne({ emailAddress }).exec();
     if (!user) {
       return res.json({
         status: false,
@@ -122,12 +124,12 @@ const LoginOperator = async (req, res) => {
 };
 
 // ----------Conroller function to get user by id----------
-const GetOperatorById = async (req, res) => {
+const GetUserById = async (req, res) => {
   // Request parameters
   const { userId } = req.params;
 
   try {
-    const user = await OperatorModel.findOne({ _id: userId }).exec();
+    const user = await UserModel.findOne({ _id: userId }).exec();
     return res.status(200).json({
       status: true,
       user,
@@ -146,4 +148,4 @@ const GetOperatorById = async (req, res) => {
   }
 };
 
-module.exports = { RegisterOperator, LoginOperator, GetOperatorById };
+module.exports = { RegisterUser, LoginUser, GetUserById };

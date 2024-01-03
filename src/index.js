@@ -7,8 +7,7 @@ require("dotenv/config");
 const Configs = require("./configs");
 const { ConnectDatabase } = require("./api/v1/helpers");
 const {
-  CustomerRoutes,
-  OperatorRoutes,
+  UserRoutes,
   DeviceRoutes,
   LocationDataRoutes,
   UserTokenRoutes,
@@ -35,8 +34,7 @@ app.get("/", (req, res) => {
 });
 
 // User route
-app.use("/api/customers", CustomerRoutes);
-app.use("/api/operator", OperatorRoutes);
+app.use("/api/users", UserRoutes);
 
 // Device data route
 app.use("/api/locationdata", LocationDataRoutes);

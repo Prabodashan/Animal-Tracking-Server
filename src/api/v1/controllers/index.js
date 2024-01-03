@@ -1,10 +1,5 @@
 // ----------Imports----------
-const { RegisterUser, LoginUser, GetUserById } = require("./Customer");
-const {
-  RegisterOperator,
-  LoginOperator,
-  GetOperatorById,
-} = require("./Operator");
+const { RegisterUser, LoginUser, GetUserById } = require("./User");
 const {
   CreateDevice,
   GetAllDeviceByUserId,
@@ -39,9 +34,6 @@ module.exports = {
   RegisterUser,
   LoginUser,
   GetUserById,
-  RegisterOperator,
-  LoginOperator,
-  GetOperatorById,
   GenerateAccessToken,
   DeleteRefreshToken,
   GetUserInfoByToken,

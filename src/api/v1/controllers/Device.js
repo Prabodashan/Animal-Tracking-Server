@@ -17,11 +17,9 @@ const CreateDevice = async (req, res) => {
 
   try {
     // Check if key already exist
-    const device = await DeviceModel
-      .findOne({
-        $or: [{ title }],
-      })
-      .exec();
+    const device = await DeviceModel.findOne({
+      $or: [{ title }],
+    }).exec();
     if (device) {
       return res.status(400).json({
         status: false,
@@ -218,7 +216,7 @@ const GetAllDeviceByUserId = async (req, res) => {
 //           $group: {
 //             _id: "$_id",
 //             title: { $first: "$title" },
-//             imageUrl: { $first: "$imageUrl" },
+//
 //             userId: { $first: "$userId" },
 //             locationData: { $push: "$locationData" },
 //             // Add other fields if needed
@@ -316,7 +314,7 @@ const GetAllDeviceByUserId = async (req, res) => {
 //           $group: {
 //             _id: "$_id",
 //             title: { $first: "$title" },
-//             imageUrl: { $first: "$imageUrl" },
+//
 //             userId: { $first: "$userId" },
 //             locationData: { $push: "$locationData" },
 //             // Add other fields if needed
@@ -344,7 +342,7 @@ const GetAllDeviceByUserId = async (req, res) => {
 //           $group: {
 //             _id: "$_id",
 //             title: { $first: "$title" },
-//             imageUrl: { $first: "$imageUrl" },
+//
 //             userId: { $first: "$userId" },
 //             locationData: { $push: "$locationData" },
 //             // Add other fields if needed
@@ -441,7 +439,7 @@ const GetAllDeviceByUserId = async (req, res) => {
 //           $group: {
 //             _id: "$_id",
 //             title: { $first: "$title" },
-//             imageUrl: { $first: "$imageUrl" },
+//
 //             userId: { $first: "$userId" },
 //             locationData: { $push: "$locationData" },
 //             // Add other fields if needed
@@ -482,7 +480,7 @@ const GetAllDeviceByUserId = async (req, res) => {
 //               },
 //             },
 //             title: { $first: "$title" },
-//             imageUrl: { $first: "$imageUrl" },
+//
 //             userId: { $first: "$userId" },
 //             locationData: { $first: "$locationData" },
 //             // Add other fields if needed
@@ -579,7 +577,7 @@ const GetAllDeviceByUserId = async (req, res) => {
 //           $group: {
 //             _id: "$_id",
 //             title: { $first: "$title" },
-//             imageUrl: { $first: "$imageUrl" },
+//
 //             userId: { $first: "$userId" },
 //             locationData: { $push: "$locationData" },
 //             // Add other fields if needed
@@ -620,7 +618,7 @@ const GetAllDeviceByUserId = async (req, res) => {
 //               },
 //             },
 //             title: { $first: "$title" },
-//             imageUrl: { $first: "$imageUrl" },
+//
 //             userId: { $first: "$userId" },
 //             locationData: { $last: "$locationData" },
 //           },
@@ -629,7 +627,7 @@ const GetAllDeviceByUserId = async (req, res) => {
 //           $group: {
 //             _id: "$_id._id",
 //             title: { $first: "$title" },
-//             imageUrl: { $first: "$imageUrl" },
+//
 //             userId: { $first: "$userId" },
 //             locationData: { $push: "$locationData" },
 //           },
@@ -724,7 +722,7 @@ const GetDevicesDataById = async (req, res) => {
       //     $group: {
       //       _id: "$_id",
       //       title: { $first: "$title" },
-      //       imageUrl: { $first: "$imageUrl" },
+      //
       //       userId: { $first: "$userId" },
       //       locationData: { $push: "$locationData" },
       //     },
@@ -760,7 +758,7 @@ const GetDevicesDataById = async (req, res) => {
               },
             },
             title: { $first: "$title" },
-            imageUrl: { $first: "$imageUrl" },
+
             userId: { $first: "$userId" },
             locationData: { $last: "$locationData" },
           },
@@ -769,7 +767,7 @@ const GetDevicesDataById = async (req, res) => {
           $group: {
             _id: "$_id._id",
             title: { $first: "$title" },
-            imageUrl: { $first: "$imageUrl" },
+
             userId: { $first: "$userId" },
             locationData: { $push: "$locationData" },
           },
@@ -809,7 +807,7 @@ const GetDevicesDataById = async (req, res) => {
               },
             },
             title: { $first: "$title" },
-            imageUrl: { $first: "$imageUrl" },
+
             userId: { $first: "$userId" },
             locationData: { $last: "$locationData" },
           },
@@ -818,7 +816,7 @@ const GetDevicesDataById = async (req, res) => {
           $group: {
             _id: "$_id._id",
             title: { $first: "$title" },
-            imageUrl: { $first: "$imageUrl" },
+
             userId: { $first: "$userId" },
             locationData: { $push: "$locationData" },
           },
@@ -866,7 +864,7 @@ const GetDevicesDataById = async (req, res) => {
               },
             },
             title: { $first: "$title" },
-            imageUrl: { $first: "$imageUrl" },
+
             userId: { $first: "$userId" },
             locationData: { $last: "$locationData" },
           },
@@ -875,7 +873,7 @@ const GetDevicesDataById = async (req, res) => {
           $group: {
             _id: "$_id._id",
             title: { $first: "$title" },
-            imageUrl: { $first: "$imageUrl" },
+
             userId: { $first: "$userId" },
             locationData: { $push: "$locationData" },
           },
@@ -897,7 +895,7 @@ const GetDevicesDataById = async (req, res) => {
         $group: {
           _id: "$_id",
           title: { $first: "$title" },
-          imageUrl: { $first: "$imageUrl" },
+
           userId: { $first: "$userId" },
           locationData: { $push: "$locationData" },
         },
