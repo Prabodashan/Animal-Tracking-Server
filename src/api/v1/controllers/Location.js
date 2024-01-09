@@ -12,7 +12,7 @@ const CreateLocationData = async (req, res) => {
   try {
     // Check if the LocationDevice with the specified ID exists
     const deviceExists = await DeviceModel.exists({
-      _id: id,
+      _id: deviceId,
     });
 
     if (!deviceExists) {
@@ -25,7 +25,7 @@ const CreateLocationData = async (req, res) => {
     }
 
     // New LocationData
-    const newLocationData = new LocationDataModel({
+    const newLocationData = new LocationModel({
       deviceId,
       latitude,
       longitude,
@@ -60,7 +60,7 @@ const UpdateLocationData = async (req, res) => {
   const { locationDataId } = req.params;
 
   try {
-    const locationData = await LocationDataModel.findOne({
+    const locationData = await LocationModel.findOne({
       _id: locationDataId,
     }).exec();
     if (!locationData) {
@@ -110,7 +110,7 @@ const DeleteLocationData = async (req, res) => {
         error: { message: "Location data not found" },
       });
     }
-    const deleteLocationData = await LocationDataModel.findOneAndDelete({
+    const deleteLocationData = await LocationModel.findOneAndDelete({
       _id: locationDataId,
     }).exec();
     return res.status(200).json({
