@@ -951,9 +951,9 @@ const GetDevicesRecentDataById = async (req, res) => {
       },
       {
         $lookup: {
-          from: "weighingdatas", // The name of the collection (Assuming it's named 'weighingdata')
+          from: "locations", // The name of the collection (Assuming it's named 'weighingdata')
           localField: "_id",
-          foreignField: "DeviceId",
+          foreignField: "deviceId",
           as: "locationData",
         },
       },
