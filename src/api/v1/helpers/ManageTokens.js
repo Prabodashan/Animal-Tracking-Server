@@ -7,7 +7,10 @@ const Configs = require("../../../configs");
 // ----------Function to generate access and refresh tokens----------
 const GenerateTokens = (user) => {
   try {
-    const payload = { userId: user._id, userType: user.userType };
+    const payload = {
+      userId: user._id,
+      userType: user.userType,
+    };
     // Generate access token
     const accessToken = jwt.sign(payload, Configs.JWT_ACCESS_KEY, {
       expiresIn: "1d",

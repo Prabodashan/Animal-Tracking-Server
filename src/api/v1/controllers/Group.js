@@ -161,19 +161,21 @@ const GetDevicesByGroupId = async (req, res) => {
           from: "devices", // The name of the collection (Assuming it's named 'devices')
           localField: "deviceList.deviceId",
           foreignField: "_id",
-          as: "deviceDetails",
+          as: "devices",
         },
       },
       {
-        $unwind: "$deviceDetails",
-      },
-      {
         $project: {
-          _id: 1, // Exclude the default _id field from the group
-          title: 1, // Include the title field from Group
+          _id: 1,
+          title: 1,
           devices: {
-            _id: "$deviceDetails._id",
-            title: "$deviceDetails.title",
+            $map: {
+              input: "$devices",
+              as: "device",
+              in: {
+                deviceId: "$$device._id",
+              },
+            },
           },
         },
       },
@@ -205,7 +207,7 @@ const UpdateGroup = async (req, res) => {
   // Request parameters
   const { groupId } = req.params;
   // Extract the title from the request body
-  const { title, dateUpdated, timeUpdated } = req.body;
+  const { title, devices, dateUpdated, timeUpdated } = req.body;
 
   try {
     const group = await GroupModel.findOne({
@@ -226,6 +228,18 @@ const UpdateGroup = async (req, res) => {
         error: { message: "Title is required for updating the group" },
       });
     }
+
+    // Validate if devices is an array
+    if (!Array.isArray(devices)) {
+      return res.status(400).json({
+        status: false,
+        error: { message: "Invalid devices format. Expecting an array." },
+      });
+    }
+
+    // Clear previous device IDs and push the new devices
+    group.deviceList = [];
+    group.deviceList.push(...devices);
 
     // Update only the title field
     group.title = title;

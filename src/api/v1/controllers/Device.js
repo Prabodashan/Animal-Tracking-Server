@@ -922,7 +922,7 @@ const GetDevicesDataById = async (req, res) => {
   }
 };
 
-// ----------Conroller function to get weighing device by id----------
+//----------Conroller function to get weighing device by id----------
 const GetDevicesRecentDataById = async (req, res) => {
   // Request parameters
   const { deviceId } = req.params;
@@ -982,6 +982,89 @@ const GetDevicesRecentDataById = async (req, res) => {
       status: false,
       error: {
         message: "Failed to fetch the weighing devices!",
+      },
+    });
+  }
+};
+
+const GetGroupDevicesRecentDataById = async (req, res) => {
+  // Request parameters
+
+  const deviceIds = req.query.deviceIds.split(",");
+
+  try {
+    // Check if all Devices with the specified IDs exist
+    const devicesExist = await DeviceModel.exists({
+      _id: { $in: deviceIds },
+    });
+
+    if (!devicesExist) {
+      return res.status(404).json({
+        status: false,
+        error: {
+          message: "One or more devices not found with the specified IDs.",
+        },
+      });
+    }
+
+    const devicesData = await Promise.all(
+      deviceIds.map(async (deviceId) => {
+        const deviceData = await DeviceModel.aggregate([
+          {
+            $match: {
+              _id: new mongoose.Types.ObjectId(deviceId),
+            },
+          },
+          {
+            $lookup: {
+              from: "locations", // The name of the collection (Assuming it's named 'locations')
+              localField: "_id",
+              foreignField: "deviceId",
+              as: "locationData",
+            },
+          },
+          {
+            $unwind:"$locationData",
+             
+          },
+          {
+            $sort: {
+              "locationData.createdAt": -1, // Sort by createdAt in descending order
+            },
+          },
+          {
+            $limit: 1, // Limit to the most recent document
+          },
+          {
+            $project: {
+              _id: 1, // device ID
+              title: 1, // device title
+              latitude: "$locationData.latitude",
+              longitude: "$locationData.longitude",
+              createdAt: "$locationData.createdAt",
+            },
+          },
+        ]);
+
+        return {
+          ...deviceData[0], // Return null if no data found for the device
+        };
+      })
+    );
+
+    return res.status(200).json({
+      status: true,
+      devicesData,
+      success: {
+        message: "Successfully fetched the devices data!",
+      },
+    });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({
+      status: false,
+      error: {
+        message: "Failed to fetch the devices data!",
       },
     });
   }
@@ -1070,4 +1153,5 @@ module.exports = {
   UpdateDevice,
   DeleteDevice,
   GetDevicesRecentDataById,
+  GetGroupDevicesRecentDataById,
 };

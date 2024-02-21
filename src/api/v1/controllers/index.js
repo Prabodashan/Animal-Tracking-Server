@@ -7,6 +7,7 @@ const {
   UpdateDevice,
   DeleteDevice,
   GetDevicesRecentDataById,
+  GetGroupDevicesRecentDataById,
 } = require("./Device");
 
 const {
@@ -45,6 +46,7 @@ module.exports = {
   UpdateDevice,
   DeleteDevice,
   GetDevicesRecentDataById,
+  GetGroupDevicesRecentDataById,
   CreateGroup,
   editGroupDevice,
   GetGroupsByUserId,

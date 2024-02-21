@@ -108,6 +108,7 @@ const LoginUser = async (req, res) => {
       refreshToken,
       userId: user._id,
       userRole: user.userRole,
+      userName: user.fullName,
       success: {
         message: "Successfully logged in the user!",
       },

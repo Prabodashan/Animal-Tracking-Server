@@ -5,12 +5,12 @@ const express = require("express");
 const {
   CreateDevice,
   GetAllDeviceByUserId,
-  GetAllDevicesDetails,
+
   GetDevicesDataById,
   UpdateDevice,
   DeleteDevice,
-  GetDeviceDetailsById,
   GetDevicesRecentDataById,
+  GetGroupDevicesRecentDataById,
 } = require("../controllers");
 
 const { AuthenticateUser, AuthorizeUser } = require("../middlewares");
@@ -36,5 +36,6 @@ router.delete("/deletedevice/:deviceId", AuthenticateUser, DeleteDevice);
 router.get("/all/", AuthenticateUser, GetAllDeviceByUserId);
 router.get("/all/:deviceId", GetDevicesDataById);
 router.get("/one/:deviceId", GetDevicesRecentDataById);
+router.get("/group/all", GetGroupDevicesRecentDataById);
 
 module.exports = router;
